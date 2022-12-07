@@ -23,20 +23,16 @@ screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 clock = pygame.time.Clock()
 
-titleFont = pygame.font.Font('./PressStart2P-Regular.ttf', 20)
-font = pygame.font.Font('./CourierPrime-Regular.ttf', 16)
-
-
 def generateSnake(snake, snakeBlock = 10, color=violet):
     for x in snake:
         pygame.draw.rect(screen, color, [x[0], x[1], snakeBlock, snakeBlock])
 
 
 def writeTitle(message, color=white, fontSize=20):
-    font = pygame.font.Font('./PressStart2P-Regular.ttf', fontSize)
+    font = pygame.font.Font('./fonts/PressStart2P-Regular.ttf', fontSize)
     return font.render(message, True, color)
 def writeText(message, color=white, fontSize=16):
-    font = pygame.font.Font('./CourierPrime-Regular.ttf', fontSize)
+    font = pygame.font.Font('./fonts/CourierPrime-Regular.ttf', fontSize)
     return font.render(message, True, color)
         
 def gameLoop():
