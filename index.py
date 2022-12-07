@@ -8,6 +8,7 @@ pygame.init()
 screenWidth=800
 screenHeight=600
 
+
 violet=(106, 0, 228)
 white=(225, 255, 255)
 brown=(170, 139, 86)
@@ -25,7 +26,6 @@ clock = pygame.time.Clock()
 titleFont = pygame.font.Font('./PressStart2P-Regular.ttf', 20)
 font = pygame.font.Font('./CourierPrime-Regular.ttf', 16)
 
-snakeSpeed=30
 
 def generateSnake(snake, snakeBlock = 10, color=violet):
     for x in snake:
@@ -38,22 +38,9 @@ def writeTitle(message, color=white, fontSize=20):
 def writeText(message, color=white, fontSize=16):
     font = pygame.font.Font('./CourierPrime-Regular.ttf', fontSize)
     return font.render(message, True, color)
-
-def pauseMenu(gamePause):
-    while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.display.quit()
-                exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    break
-                    
-        screen.fill(background)
-        
-        pygame.display.update()
         
 def gameLoop():
+    snakeSpeed=15
     gameClose=False
     while True:
         screen.fill(background)
@@ -67,8 +54,8 @@ def gameLoop():
         snakeBody=[]
         snakeLength=1
         
-        foodX=round(random.randrange(0, screenWidth - 10) / 10.0) * 10.0
-        foodY=round(random.randrange(0, screenHeight - 10) / 10.0) * 10.0
+        foodX=round(random.randrange(10, screenWidth - 10) / 10.0) * 10.0
+        foodY=round(random.randrange(10, screenHeight - 10) / 10.0) * 10.0
         
         gamePause=False
         gameOver=False
@@ -82,7 +69,6 @@ def gameLoop():
 
         while not gameClose:
             screen.fill(background)
-            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.display.quit()
@@ -122,6 +108,7 @@ def gameLoop():
                 screen.blit(writeText("Pressione [N] para um novo jogo ou [Q] para sair"), [screenWidth/2 - 220, screenHeight*0.85])
 
             else:
+              
                 if snakeX >= screenWidth or snakeX < 0 or snakeY >= screenHeight or snakeY < 0:
                     gameOver = True
                     gameOverCause='Você bateu na parede'
@@ -130,8 +117,9 @@ def gameLoop():
                 snakeY += snakeYChange
                 
                 screen.fill(background)
-                    
-                food = pygame.draw.rect(screen, brown, [foodX, foodY, 10, 10])
+                
+                screen.blit(writeTitle("Score: {}".format(snakeLength - 1), white, 14), [20, 20])
+                pygame.draw.rect(screen, brown, [foodX, foodY, 10, 10])
                 
                 snakeHead=[]
                 snakeHead.append(snakeX)
@@ -147,10 +135,14 @@ def gameLoop():
                         gameOverCause='Você mordeu sua própria cauda'
                 
                 if int(snakeX) == int(foodX) and int(snakeY) == int(foodY):
-                    foodX=round(random.randrange(0, screenWidth - 10) / 10.0) * 10.0
-                    foodY=round(random.randrange(0, screenHeight - 10) / 10.0) * 10.0
+                    foodX=round(random.randrange(10, screenWidth - 10) / 10.0) * 10.0
+                    foodY=round(random.randrange(10, screenHeight - 10) / 10.0) * 10.0
 
                     snakeLength += 1
+                    if snakeLength == 5:
+                        snakeSpeed = 20
+                    elif snakeLength >= 10 and snakeLength % 10 == 0:
+                        snakeSpeed += 5
                 
                 generateSnake(snakeBody)
                 
@@ -185,7 +177,7 @@ def homeScreen():
         else:
             screen.blit(writeTitle("Snake", white, 30), [screenWidth*0.4, screenHeight*0.3])
             pygame.draw.polygon(screen, green, [(screenWidth/2 - 25, screenHeight/2), (screenWidth/2 - 25, screenHeight/2 + 50), (screenWidth/2 + 25, screenHeight/2 + 25)])
-            screen.blit(writeText("Pressione qualquer lugar para iniciar", white, 20), [screenWidth*0.23, screenHeight*0.7])
+            screen.blit(writeText("Clique em qualquer lugar para iniciar", white, 20), [screenWidth*0.23, screenHeight*0.7])
      
         pygame.display.update()
     
