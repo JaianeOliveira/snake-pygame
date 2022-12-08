@@ -113,6 +113,8 @@ def gameLoop():
                         snakeY = screenHeight/2
                         foodX=round(random.randrange(10, screenWidth - 10) / 10.0) * 10.0
                         foodY=round(random.randrange(screenHeight*0.1, screenHeight - 10) / 10.0) * 10.0
+                        pygame.draw.rect(screen, red, [0, 0, screenWidth, screenHeight], 3)
+                        pygame.display.update()
                     else:
                         gameOver = True
                         gameOverCause='Você bateu na parede'
@@ -124,6 +126,10 @@ def gameLoop():
                 
                 screen.blit(writeTitle("Score: {}".format(snakeLength - 1), white, 14), [20, 20])
                 screen.blit(writeTitle("Vidas", white, 14), [screenWidth - 200, 20])
+                
+                
+                
+                
                 for life in range(snakeLifes):
                     pygame.draw.circle(screen, green, [screenWidth - (110 - (life*25)), 27.5], 5)
                 pygame.draw.rect(screen, brown, [foodX, foodY, 10, 10])
@@ -142,10 +148,13 @@ def gameLoop():
                     if x == snakeHead:
                        if snakeLifes > 1:
                            snakeLifes -= 1
+                           screen.blit(writeTitle("Voce perdeu uma vida", red, 10), [screenWidth*0.685, 45])
                            snakeX = screenWidth/2
                            snakeY = screenHeight/2
                            foodX=round(random.randrange(10, screenWidth - 10) / 10.0) * 10.0
                            foodY=round(random.randrange(screenHeight*0.1, screenHeight - 10) / 10.0) * 10.0
+                           pygame.draw.rect(screen, red, [0, 0, screenWidth, screenHeight], 3)
+                           pygame.display.update()
                        else:
                             gameOver=True
                             gameOverCause='Você mordeu sua própria cauda'
@@ -162,6 +171,8 @@ def gameLoop():
                         
                     if (snakeLength - 1) % 25 == 0 and snakeLifes < 3:
                         snakeLifes += 1
+                        pygame.draw.rect(screen, green, [0, 0, screenWidth, screenHeight], 3)
+                        pygame.display.update()
                 
                 generateSnake(snakeBody)
                 
