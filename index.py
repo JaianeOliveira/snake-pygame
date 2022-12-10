@@ -1,4 +1,4 @@
-import random
+from random import randint
 
 import pygame
 from pygame.locals import *
@@ -30,6 +30,7 @@ def writeText(message, color=colors['white'], fontSize=16):
 def gameLoop():
     snakeSpeed = 15
     gameClose = False
+
     while True:
         screen.fill(colors['background'])
 
@@ -39,14 +40,13 @@ def gameLoop():
         snakeXChange = 0
         snakeYChange = 0
 
+        foodX = round(randint(10, screenWidth - 10) / 10.0) * 10.0
+        foodY = round(randint(screenHeight*0.1,
+                      screenHeight - 10) / 10.0) * 10.0
+
         snakeBody = []
         snakeLength = 1
-
         snakeLifes = 3
-
-        foodX = round(random.randrange(10, screenWidth - 10) / 10.0) * 10.0
-        foodY = round(random.randrange(screenHeight*0.1,
-                      screenHeight - 10) / 10.0) * 10.0
 
         gamePause = False
         gameOver = False
@@ -54,6 +54,7 @@ def gameLoop():
 
         while not gameClose:
             screen.fill(colors['background'])
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.display.quit()
@@ -88,6 +89,7 @@ def gameLoop():
                             screenWidth/2 - 115, screenHeight*0.15])
                 screen.blit(writeText("Pressione [Esc] para continuar ou [Q] para sair"), [
                             screenWidth/2 - 220, screenHeight*0.85])
+
             elif gameOver:
                 pygame.draw.rect(screen, colors['menu'], [
                                  screenWidth*0.1, screenHeight*0.1, screenWidth*0.8, screenHeight*0.8], 400, 8)
@@ -99,37 +101,10 @@ def gameLoop():
                             screenWidth/2 - 220, screenHeight*0.85])
 
             else:
-                if snakeX >= screenWidth or snakeX < 0 or snakeY >= screenHeight or snakeY < 0:
-                    if snakeLifes > 1:
-                        snakeLifes -= 1
-                        snakeX = screenWidth/2
-                        snakeY = screenHeight/2
-                        foodX = round(random.randrange(
-                            10, screenWidth - 10) / 10.0) * 10.0
-                        foodY = round(random.randrange(
-                            screenHeight*0.1, screenHeight - 10) / 10.0) * 10.0
-                        pygame.draw.rect(
-                            screen, colors['red'], [0, 0, screenWidth, screenHeight], 3)
-                        pygame.display.update()
-                    else:
-                        gameOver = True
-                        gameOverCause = 'Você bateu na parede'
+                screen.fill(colors['background'])
 
                 snakeX += snakeXChange
                 snakeY += snakeYChange
-
-                screen.fill(colors['background'])
-
-                screen.blit(writeTitle("Score: {}".format(
-                    snakeLength - 1), colors['white'], 14), [20, 20])
-                screen.blit(writeTitle("Vidas", colors['white'], 14),
-                            [screenWidth - 200, 20])
-
-                for life in range(snakeLifes):
-                    pygame.draw.circle(
-                        screen, colors['green'], [screenWidth - (110 - (life*25)), 27.5], 5)
-                pygame.draw.rect(screen, colors['brown'], [
-                                 foodX, foodY, 10, 10])
 
                 snakeHead = []
                 snakeHead.append(snakeX)
@@ -139,6 +114,39 @@ def gameLoop():
                 if len(snakeBody) > snakeLength:
                     del snakeBody[0]
 
+                # desenha os componentes em tela
+                screen.blit(writeTitle("Score: {}".format(
+                    snakeLength - 1), colors['white'], 14), [20, 20])
+                screen.blit(writeTitle("Vidas", colors['white'], 14),
+                            [screenWidth - 200, 20])
+
+                for life in range(snakeLifes):
+                    pygame.draw.circle(
+                        screen, colors['green'], [screenWidth - (110 - (life*25)), 27.5], 5)
+
+                pygame.draw.rect(screen, colors['brown'], [
+                                 foodX, foodY, 10, 10])
+
+                generateSnake(snakeBody)
+
+                # verifica se a cobra bateu na parede
+                if snakeX >= screenWidth or snakeX < 0 or snakeY >= screenHeight or snakeY < 0:
+                    if snakeLifes > 1:
+                        snakeLifes -= 1
+                        snakeX = screenWidth/2
+                        snakeY = screenHeight/2
+                        foodX = round(randint(
+                            10, screenWidth - 10) / 10.0) * 10.0
+                        foodY = round(randint(
+                            screenHeight*0.1, screenHeight - 10) / 10.0) * 10.0
+                        pygame.draw.rect(
+                            screen, colors['red'], [0, 0, screenWidth, screenHeight], 3)
+                        pygame.display.update()
+                    else:
+                        gameOver = True
+                        gameOverCause = 'Você bateu na parede'
+
+                # verifica se a cobra mordeu a própria cauda
                 for x in snakeBody[:-1]:
                     if x == snakeHead:
                         if snakeLifes > 1:
@@ -147,9 +155,9 @@ def gameLoop():
                                         screenWidth*0.685, 45])
                             snakeX = screenWidth/2
                             snakeY = screenHeight/2
-                            foodX = round(random.randrange(
+                            foodX = round(randint(
                                 10, screenWidth - 10) / 10.0) * 10.0
-                            foodY = round(random.randrange(
+                            foodY = round(randint(
                                 screenHeight*0.1, screenHeight - 10) / 10.0) * 10.0
                             pygame.draw.rect(
                                 screen, colors['red'], [0, 0, screenWidth, screenHeight], 3)
@@ -158,10 +166,11 @@ def gameLoop():
                             gameOver = True
                             gameOverCause = 'Você mordeu sua própria cauda'
 
+                # verifica se a cobra comeu a comida
                 if int(snakeX) == int(foodX) and int(snakeY) == int(foodY):
-                    foodX = round(random.randrange(
+                    foodX = round(randint(
                         10, screenWidth - 10) / 10.0) * 10.0
-                    foodY = round(random.randrange(
+                    foodY = round(randint(
                         screenHeight*0.1, screenHeight - 10) / 10.0) * 10.0
 
                     snakeLength += 1
@@ -176,13 +185,12 @@ def gameLoop():
                             screen, colors['green'], [0, 0, screenWidth, screenHeight], 3)
                         pygame.display.update()
 
-                generateSnake(snakeBody)
-
             clock.tick(snakeSpeed)
             pygame.display.update()
 
         if gameClose:
             break
+
         pygame.display.update()
 
 
@@ -191,18 +199,15 @@ def homeScreen():
         screen.fill(colors['background'])
 
         startGame = False
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.display.quit()
                 exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    print('Pause')
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 startGame = True
 
         if startGame:
-            print('começou')
             gameLoop()
         else:
             screen.blit(writeTitle("Snake", colors['white'], 30), [
